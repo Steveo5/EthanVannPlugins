@@ -9,7 +9,7 @@ public class Node {
     Node previous;
     public boolean visited;
 
-    Node(WorldPoint data) {
+    public Node(WorldPoint data) {
         this.data = data;
     }
 
@@ -18,7 +18,7 @@ public class Node {
         this.previous = null;
     }
 
-    Node(WorldPoint data, Node previous) {
+    public Node(WorldPoint data, Node previous) {
         this.data = data;
         this.previous = previous;
     }
