@@ -2,9 +2,12 @@ package com.example.EthanApiPlugin.PathFinding;
 
 import net.runelite.api.coords.WorldPoint;
 
+import java.util.List;
+
 public class Node {
     WorldPoint data;
     Node previous;
+    public boolean visited;
 
     Node(WorldPoint data) {
         this.data = data;
@@ -32,4 +35,8 @@ public class Node {
         this.data = data;
         this.previous = previous;
     }
+
+//    public Node getNearestNeighbour(Node current, Node destination) {
+//
+//    }
 }

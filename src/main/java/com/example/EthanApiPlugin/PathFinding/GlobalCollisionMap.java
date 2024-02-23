@@ -1,7 +1,11 @@
 package com.example.EthanApiPlugin.PathFinding;
 
 import com.example.EthanApiPlugin.EthanApiPlugin;
+import com.google.common.base.Strings;
+import net.runelite.api.*;
+import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.client.RuneLite;
 import org.roaringbitmap.RoaringBitmap;
 
 import java.io.IOException;
@@ -62,6 +66,74 @@ public class GlobalCollisionMap {
         return (wp.getX() & 16383) | ((wp.getY() & 16383) << 14) | (wp.getPlane() << 28);
     }
 
+    private static boolean objectCompCheck(ObjectComposition comp)
+    {
+        return (comp != null && !Strings.isNullOrEmpty(comp.getName()) && !comp.getName().equals("null"));
+    }
+
+    private static boolean gameObjectCheck(TileObject object)
+    {
+        return object != null && object.getLocalLocation().distanceTo(EthanApiPlugin.getClient().getLocalPlayer().getLocalLocation()) <= 30;
+    }
+
+    private static ObjectComposition replaceObjectImposters(ObjectComposition comp)
+    {
+        return comp.getImpostorIds() != null ? comp.getImpostor() : comp;
+    }
+
+    public static List<WorldPoint> getNeighbours(WorldPoint wp) {
+        List<WorldPoint> points = new ArrayList<>();
+
+        points.add(wp.dy(1).dx(1));
+        points.add(wp.dy(1).dx(-1));
+        points.add(wp.dy(-1).dx(1));
+        points.add(wp.dy(-1).dx(-1));
+        points.add(wp.dx(-1));
+        points.add(wp.dx(1));
+        points.add(wp.dy(-1));
+        points.add(wp.dy(1));
+
+        return points;
+    }
+
+    public static WorldPoint getClosestNeighbour(WorldPoint current, WorldPoint target) {
+
+        int lastClosest = 10000000;
+        WorldPoint closest = null;
+        for (WorldPoint test : getNeighbours(current)) {
+            LocalPoint testLocal = LocalPoint.fromWorld(EthanApiPlugin.getClient(), test);
+
+            if (testLocal != null) {
+                Tile tileAtTest = EthanApiPlugin.getClient().getScene().getTiles()[test.getPlane()][testLocal.getSceneX()][testLocal.getSceneY()];
+
+                if (tileAtTest != null) {
+                    System.out.println("The tile isnt null");
+                    WallObject wallObject = tileAtTest.getWallObject();
+
+                    if (gameObjectCheck(wallObject))
+                    {
+                        int objectId = wallObject.getId();
+                        ObjectComposition comp = replaceObjectImposters(EthanApiPlugin.getClient().getObjectDefinition(objectId));
+
+                        if (objectCompCheck(comp))
+                        {
+                            continue;
+                        }
+                    }
+
+                }
+            }
+
+            int distanceTo = test.distanceTo(target);
+            if (distanceTo < lastClosest) {
+                lastClosest = distanceTo;
+                closest = test;
+            }
+        }
+
+        return closest;
+    }
+
     public static List<WorldPoint> findPath(WorldPoint p) {
         long start = System.currentTimeMillis();
         WorldPoint starting = EthanApiPlugin.getClient().getLocalPlayer().getWorldLocation();
@@ -82,22 +154,47 @@ public class GlobalCollisionMap {
                 System.out.println("Path took " + (System.currentTimeMillis() - start) + "ms");
                 return ret;
             }
-            //west
-            if (west(currentData) && visited.add(currentData.dx(-1))) {
-                queue.add(new Node(currentData.dx(-1), current));
+
+            if (getClosestNeighbour(currentData, p) != null) {
+                queue.add(new Node(getClosestNeighbour(currentData, p), current));
             }
-            //east
-            if (east(currentData) && visited.add(currentData.dx(1))) {
-                queue.add(new Node(currentData.dx(1), current));
-            }
-            //south
-            if (south(currentData) && visited.add(currentData.dy(-1))) {
-                queue.add(new Node(currentData.dy(-1), current));
-            }
-            //north
-            if (north(currentData) && visited.add(currentData.dy(1))) {
-                queue.add(new Node(currentData.dy(1), current));
-            }
+
+//            // northeast
+//            if (north(currentData) && east(currentData) && visited.add(currentData.dy(1).dx(1))) {
+//                queue.add(new Node(currentData.dy(1).dx(1), current));
+//            }
+//
+//            // northwest
+//            if (north(currentData) && west(currentData) && visited.add(currentData.dy(1).dx(-1))) {
+//                queue.add(new Node(currentData.dy(1).dx(-1), current));
+//            }
+//
+//            // southeast
+//            if (south(currentData) && east(currentData) && visited.add(currentData.dy(-1).dx(1))) {
+//                queue.add(new Node(currentData.dy(-1).dx(1), current));
+//            }
+//
+//            // southwest
+//            if (south(currentData) && west(currentData) && visited.add(currentData.dy(-1).dx(-1))) {
+//                queue.add(new Node(currentData.dy(-1).dx(-1), current));
+//            }
+//
+//            // west
+//            if (west(currentData) && visited.add(currentData.dx(-1))) {
+//                queue.add(new Node(currentData.dx(-1), current));
+//            }
+//            // east
+//            if (east(currentData) && visited.add(currentData.dx(1))) {
+//                queue.add(new Node(currentData.dx(1), current));
+//            }
+//            // south
+//            if (south(currentData) && visited.add(currentData.dy(-1))) {
+//                queue.add(new Node(currentData.dy(-1), current));
+//            }
+//            //north
+//            if (north(currentData) && visited.add(currentData.dy(1))) {
+//                queue.add(new Node(currentData.dy(1), current));
+//            }
         }
         return null;
     }
