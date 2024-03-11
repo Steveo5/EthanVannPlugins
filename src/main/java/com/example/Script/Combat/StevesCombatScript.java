@@ -1,8 +1,10 @@
 package com.example.Script.Combat;
 
-import com.example.Script.Combat.CombatSpotRequirements;
 import com.example.Script.Script;
+import com.example.StevesPlugin.Walking.Walker;
+import net.runelite.api.coords.WorldPoint;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -13,12 +15,17 @@ public class StevesCombatScript extends Script {
     private ArrayList<String> food = new ArrayList<>();
     private boolean useBestFood = true;
 
+    @Inject
+    public Walker walker;
+
     public StevesCombatScript() {
         super("StevesCombat");
+        System.out.println("The script wasintialized");
     }
 
     @Override
     public void onStart() {
+        this.walker.webWalkTo(new WorldPoint(3259, 3336, 0));
     }
 
     @Override
@@ -26,27 +33,13 @@ public class StevesCombatScript extends Script {
 
     }
 
-//    private List<WorldPoint> findPath(Node start, Node destination) {
-//        Queue<Node> queue;
-//        queue.add(start);
-//        start.visited = true;
-//        while (!queue.isEmpty()) {
-//            Node current = queue.peek();
-//
-//            if (current.getData().equals(destination.getData())) {
-//                return queue;
-//            }
-//
-//            for (Node neighbor : current.getNeighbours())
-//                if !neighbor.visited()
-//                queue.enqueue(neighbor)
-//                neighbor.visited = true
-//        }
-//    }
 
     @Override
     public int onLoop() {
-        System.out.println("Loop");
+
+//        if (this.walker != null && !walker.isWalking()) {
+//            walker.walkTo("varrock_east_bank");
+//        }
 
         return new Random().nextInt(4000 - 1000 + 1) + 1000;
     }

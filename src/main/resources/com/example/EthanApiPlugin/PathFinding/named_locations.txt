@@ -1,0 +1,2 @@
+lumbridge_castle,3221 3218 0
+varrock_east_bank,3253 3417 0

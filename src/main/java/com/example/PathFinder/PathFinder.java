@@ -1,6 +1,5 @@
 package com.example.PathFinder;
 
-import com.example.StevesPlugin.StevesPlugin;
 import net.runelite.api.coords.WorldArea;
 import net.runelite.api.coords.WorldPoint;
 
@@ -8,8 +7,8 @@ import java.util.*;
 
 public class PathFinder {
     private final CollisionMap map;
-    private final Node start;
-    private final WorldPoint target;
+    private Node start;
+    private WorldPoint target;
     private final List<Node> boundary = new LinkedList<>();
     private final Set<WorldPoint> visited = new HashSet<>();
     private final Map<WorldPoint, List<WorldPoint>> transports;
@@ -25,6 +24,16 @@ public class PathFinder {
         this.start = new Node(start, null);
         this.avoidWilderness = avoidWilderness;
         nearest = null;
+    }
+
+    public List<WorldPoint> find(WorldPoint start, WorldPoint target) {
+        this.target = target;
+        this.start = new Node(start, null);
+        nearest = null;
+        boundary.clear();
+        visited.clear();
+
+        return this.find();
     }
 
     public List<WorldPoint> find() {

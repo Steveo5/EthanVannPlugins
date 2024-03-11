@@ -37,9 +37,12 @@ import java.awt.Stroke;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import javafx.util.Pair;
 import net.runelite.api.Client;
 import net.runelite.api.Perspective;
 import net.runelite.api.Point;
@@ -48,27 +51,36 @@ import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.client.plugins.groundmarkers.GroundMarkerConfig;
 import net.runelite.client.plugins.groundmarkers.GroundMarkerPlugin;
-import net.runelite.client.ui.overlay.Overlay;
-import net.runelite.client.ui.overlay.OverlayUtil;
+import net.runelite.client.ui.overlay.*;
 
+@Singleton
 public class TileMarkerOverlay extends Overlay
 {
 	private static final int MAX_DRAW_DISTANCE = 32;
 
 	Client client;
 
-	private List<WorldPoint> points = new ArrayList<>();
-	private Color color;
+	private List<WorldPointTileColour> points = new ArrayList<>();
+
+	public TileMarkerOverlay() {
+		setPosition(OverlayPosition.DYNAMIC);
+		setLayer(OverlayLayer.ABOVE_SCENE);
+		setPriority(OverlayPriority.MED);
+	}
 
 	public void drawTiles(List<WorldPoint> points, Color color) {
-		this.points = points;
-		this.color = color;
+		this.points.addAll(points.stream().map((wp) -> new WorldPointTileColour(wp, color)).collect(Collectors.toList()));
 		this.client = EthanApiPlugin.getClient();
+	}
+
+	public void resetHighlighted() {
+		this.points.clear();
 	}
 
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
+//		System.out.println(points.size());
 		if (points.isEmpty() || client == null)
 		{
 			return null;
@@ -80,20 +92,14 @@ public class TileMarkerOverlay extends Overlay
 //		return null;
 
 		Stroke stroke = new BasicStroke();
-		for (final WorldPoint point : points)
+		for (final WorldPointTileColour pointTileColour : points)
 		{
-			if (point.getPlane() != client.getPlane())
+			if (pointTileColour.getWorldPoint().getPlane() != client.getPlane())
 			{
 				continue;
 			}
 
-			LocalPoint testLocal = LocalPoint.fromWorld(EthanApiPlugin.getClient(), point);
-
-			if (testLocal != null) {
-				Tile tileAtTest = EthanApiPlugin.getClient().getScene().getTiles()[point.getPlane()][testLocal.getSceneX()][testLocal.getSceneY()];
-			}
-
-			drawTile(graphics, point, color, "", stroke);
+			drawTile(graphics, pointTileColour.getWorldPoint(), pointTileColour.getColor(), "", stroke);
 		}
 
 		return null;
@@ -105,12 +111,14 @@ public class TileMarkerOverlay extends Overlay
 
 		if (point.distanceTo(playerLocation) >= MAX_DRAW_DISTANCE)
 		{
+			System.out.println("Return for " + point + " " + playerLocation);
 			return;
 		}
 
 		LocalPoint lp = LocalPoint.fromWorld(client, point);
 		if (lp == null)
 		{
+			System.out.println("LP NULL " + point + " " + playerLocation);
 			return;
 		}
 

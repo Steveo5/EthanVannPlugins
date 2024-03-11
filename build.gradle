@@ -1,10 +1,18 @@
 plugins {
     id 'java'
     id 'maven-publish'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+}
+
+javafx {
+    version = "17.0.8"
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.swing' ]
 }
 
 repositories {
     mavenLocal()
+    google()
     maven {
         url = 'https://repo.runelite.net'
     }
@@ -25,6 +33,9 @@ dependencies {
     implementation 'org.roaringbitmap:RoaringBitmap:0.9.44'
     implementation("com.google.archivepatcher:archive-patch-applier:1.0.4")
     implementation("org.benf:cfr:0.152")
+    compileOnly 'com.google.inject:guice:4.2.3'
+    implementation group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '4.2.3'
+    implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 }
 sourceSets {
     main {

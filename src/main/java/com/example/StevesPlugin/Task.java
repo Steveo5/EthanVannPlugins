@@ -1,8 +1,8 @@
-package com.example.Task;
+package com.example.StevesPlugin;
 
 import java.util.function.Consumer;
 
-public abstract class Task {
+public class Task {
     protected Consumer<Boolean> onCompleteCallback;
     protected boolean isRunning = false;
     private Thread taskThread;

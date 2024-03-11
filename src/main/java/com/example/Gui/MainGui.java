@@ -4,6 +4,8 @@ import com.example.EthanApiPlugin.EthanApiPlugin;
 import com.example.EthanApiPlugin.PathFinding.GlobalCollisionMap;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -26,7 +28,7 @@ public class MainGui extends JFrame {
             try {
                 FXMLLoader loader = new FXMLLoader(GlobalCollisionMap.class.getResource("MainGui.fxml"));
                 Parent root = loader.load();
-                jfxPanel.setScene(new Scene(root, 895, 750));
+                jfxPanel.setScene(new Scene(root, 1000, 600));
 
                 SwingUtilities.invokeLater(() -> {
                     this.add(jfxPanel);
@@ -44,7 +46,7 @@ public class MainGui extends JFrame {
                     Parent scriptPoolItemRoot = scriptPoolItemLoader.load();
                     GridPane gridScriptPool = (GridPane)root.getScene().lookup("#gridScriptPool");
 
-                    gridScriptPool.add(scriptPoolItemRoot, 0, 0);
+//                    gridScriptPool.add(scriptPoolItemRoot, 0, 0);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -55,6 +57,7 @@ public class MainGui extends JFrame {
             }
 
         });
+
 //
 //        Timer t = new Timer();
 //        t.schedule(new TimerTask() {

@@ -10,8 +10,8 @@ public class MouseOverlay extends Overlay {
     @Override
     public Dimension render(Graphics2D graphics) {
         Mouse m = StevesPlugin.getInstance().getMouse();
-        graphics.drawLine(0, m.getMousePos().getY(), EthanApiPlugin.getClient().getCanvasWidth(), m.getMousePos().getY());
-        graphics.drawLine(m.getMousePos().getX(), 0, m.getMousePos().getX(), EthanApiPlugin.getClient().getCanvasHeight());
+//        graphics.drawLine(0, m.getMousePos().getY(), EthanApiPlugin.getClient().getCanvasWidth(), m.getMousePos().getY());
+//        graphics.drawLine(m.getMousePos().getX(), 0, m.getMousePos().getX(), EthanApiPlugin.getClient().getCanvasHeight());
 
         return null;
     }

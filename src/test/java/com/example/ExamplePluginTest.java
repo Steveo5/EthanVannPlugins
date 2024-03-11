@@ -4,24 +4,20 @@ import com.example.EthanApiPlugin.EthanApiPlugin;
 import com.example.Gui.MainGui;
 import com.example.PacketUtils.PacketUtilsPlugin;
 import com.example.StevesPlugin.StevesPlugin;
-import com.example.Gui.MainGuiFrame;
+import com.example.StevesPlugin.Walking.WalkerModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import javafx.application.Platform;
 import net.runelite.client.RuneLite;
 import net.runelite.client.externalplugins.ExternalPluginManager;
-import net.runelite.client.ui.ContainableFrame;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.CountDownLatch;
 
 public class ExamplePluginTest {
     public static void main(String[] args) throws Exception {
-//        ExternalPluginManager.loadBuiltin(EthanApiPlugin.class, PacketUtilsPlugin.class, StevesPlugin.class);
-//        RuneLite.main(args);
-
         Platform.startup(MainGui::new);
+        ExternalPluginManager.loadBuiltin(EthanApiPlugin.class, PacketUtilsPlugin.class, StevesPlugin.class);
+        RuneLite.main(args);
+
+
 
 //        MainGuiFrame mainGuiFrame = new MainGuiFrame();
 //
